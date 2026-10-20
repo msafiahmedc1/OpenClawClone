@@ -3,6 +3,9 @@
   "module": "index.ts",
   "type": "module",
   "private": true,
+  "bin": {
+    "openclawclone": "./index.ts"
+  },
   "devDependencies": {
     "@types/bun": "latest"
   },
@@ -10,6 +13,11 @@
     "typescript": "^5"
   },
   "dependencies": {
-    "@types/node": "^26.6.5"
+    "@clack/core": "^1.5.1",
+    "@clack/prompts": "^1.8.1",
+    "@types/node": "^26.6.5",
+    "chalk": "^6.0.1",
+    "commander": "^15.0.0",
+    "figlet": "^1.12.0"
   }
 }
