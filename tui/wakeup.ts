@@ -1,6 +1,7 @@
 import { select, isCancel } from "@clack/prompts";
 import chalk from "chalk";
 import figlet from "figlet";
+import { runCliMode } from "../modes/cli";
 
 const BANNER_FONT = "ANSI Shadow";
 const SHADOW = chalk.hex("#5b4d9e");
@@ -28,20 +29,25 @@ export async function runWakeup() {
     ascii = figlet.textSync("openclawclone", { font: "Standard" });
   }
   printBannerWithShadow(ascii);
-  const mode = await select({
-    message: "Which mode do you want select?",
-    options: [
-      { value: "cli", label: "CLI" },
-      { value: "telegram", label: "Telegram" },
-    ],
-  });
-  if (isCancel(mode)) {
-    process.exit(0);
-  }
-  if (mode === "cli") {
-    console.log(chalk.dim("You selected cli mode."));
-  }
-  if (mode === "telegram") {
-    console.log(chalk.dim("You selected telegram mode."));
+  while (true) {
+    const mode = await select({
+      message: "Which mode do you want select?",
+      options: [
+        { value: "cli", label: "CLI" },
+        { value: "telegram", label: "Telegram" },
+        { value: "exit", label: "Exit" },
+      ],
+    });
+    if (isCancel(mode) || mode === "exit") {
+      console.log(chalk.dim("Goodbye!"));
+      process.exit(0);
+    }
+    if (mode === "cli") {
+      const result = await runCliMode();
+      if (result === "cancel") return;
+    } else if (mode === "telegram") {
+      console.log(chalk.dim("You selected telegram mode."));
+      return;
+    }
   }
 }
