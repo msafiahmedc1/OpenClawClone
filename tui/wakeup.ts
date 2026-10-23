@@ -1,6 +1,6 @@
-import { select, isCancel } from "@clack/prompts";
 import chalk from "chalk";
 import figlet from "figlet";
+import { select, isCancel } from "@clack/prompts";
 import { runCliMode } from "../modes/cli";
 
 const BANNER_FONT = "ANSI Shadow";
