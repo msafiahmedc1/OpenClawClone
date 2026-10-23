@@ -16,7 +16,7 @@ export async function runCliMode() {
     if (isCancel(mode)) return "cancel";
     if (mode === "back") return "back";
     if (mode === "agent") {
-      runAgentMode();
+      await runAgentMode();
     } else if (mode === "ask") {
       console.log(chalk.dim("You selected ask mode."));
     } else if (mode === "plan") {
