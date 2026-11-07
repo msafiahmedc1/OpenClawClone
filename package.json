@@ -1,10 +1,10 @@
 {
-  "name": "openclawclone",
+  "name": "ai-coding-assistant-cli",
   "module": "index.ts",
   "type": "module",
   "private": true,
   "bin": {
-    "openclawclone": "./index.ts"
+    "ai-coding-assistant-cli": "./index.ts"
   },
   "devDependencies": {
     "@types/bun": "latest"

@@ -25,9 +25,9 @@ function printBannerWithShadow(ascii: string) {
 export async function runWakeup() {
   let ascii: string;
   try {
-    ascii = figlet.textSync("openclawclone", { font: BANNER_FONT });
+    ascii = figlet.textSync("AI Coding\nAssistant CLI", { font: BANNER_FONT });
   } catch (error) {
-    ascii = figlet.textSync("openclawclone", { font: "Standard" });
+    ascii = figlet.textSync("AI Coding\nAssistant CLI", { font: "Standard" });
   }
   printBannerWithShadow(ascii);
   while (true) {
