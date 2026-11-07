@@ -1,5 +1,5 @@
 import chalk from "chalk";
-import { select, isCancel } from "@clack/prompts";
+import { select, isCancel } from "../tui/interaction";
 import { runAgentMode } from "./agent/orchestrator";
 import { runAskMode } from "./ask/orchestrator";
 import { runPlanMode } from "./plan/orchestrator";

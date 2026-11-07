@@ -1,9 +1,10 @@
 import chalk from "chalk";
-import { select, isCancel } from "@clack/prompts";
 import type { ActionTracker } from "./action-tracker.ts";
 import type { ActionLog } from "./types.ts";
 import { composeBeforeAfter, formatPatch } from "./diff-view.ts";
 import { renderTerminalMarkdown } from "../../tui/terminal-md.ts";
+import { say } from "../../tui/interaction";
+import { select, isCancel } from "../../tui/interaction";
 
 interface ReviewGroup {
   label: string;
@@ -96,6 +97,7 @@ export async function runApprovalFlow(
         return false;
       }
       if (opt === "diff") {
+        await say(g.patch ?? "No diff is available for this operation.");
         if (g.patch) {
           console.log(
             "\n" +

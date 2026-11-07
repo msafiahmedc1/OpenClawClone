@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { stepCountIs, ToolLoopAgent } from "ai";
-import { isCancel, text } from "@clack/prompts";
+import { isCancel, text } from "../../tui/interaction";
 import { defaultAgentConfig } from "./types";
 import { ActionTracker } from "./action-tracker";
 import { ToolExecutor } from "./tool-executor";
@@ -8,6 +8,7 @@ import { createAgentTools } from "./agent-tools";
 import { runApprovalFlow } from "./approval";
 import { getAgentModel } from "../../ai";
 import { renderTerminalMarkdown } from "../../tui/terminal-md";
+import { say } from "../../tui/interaction";
 
 export async function runAgentMode() {
   console.log(chalk.bold("You selected agent mode."));
@@ -43,6 +44,7 @@ export async function runAgentMode() {
     },
   });
   if (result.text?.trim()) console.log(renderTerminalMarkdown(result.text));
+  if (result.text?.trim()) await say(result.text);
   const ok = await runApprovalFlow(tracker);
   if (!ok) return executor.clearStaging();
   const { errors } = executor.applyApprovedFromTracker();
@@ -53,4 +55,9 @@ export async function runAgentMode() {
     console.log(chalk.green("\n✓ Applied.\n"));
   }
   executor.clearStaging();
+  await say(
+    errors.length
+      ? `Some operations failed. ${errors.join(". ")}`
+      : "Approved changes applied.",
+  );
 }

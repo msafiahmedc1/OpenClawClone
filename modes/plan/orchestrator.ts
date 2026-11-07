@@ -1,6 +1,6 @@
 import chalk from "chalk";
 import { ToolLoopAgent, stepCountIs } from "ai";
-import { confirm, isCancel, text } from "@clack/prompts";
+import { confirm, isCancel, text } from "../../tui/interaction";
 import type { PlanStep } from "./types.ts";
 import { printPlan, selectSteps } from "./selection.ts";
 import { generatePlan } from "./planner.ts";
@@ -12,6 +12,7 @@ import { defaultAgentConfig } from "../agent/types.ts";
 import { runApprovalFlow } from "../agent/approval.ts";
 import { renderTerminalMarkdown } from "../../tui/terminal-md.ts";
 import { getAgentModel } from "../../ai/ai.config.ts";
+import { say } from "../../tui/interaction";
 
 function stepPrompt(goal: string, step: PlanStep): string {
   return [`Goal: ${goal}`, `Step: ${step.title}`, step.description].join("\n");
@@ -23,12 +24,23 @@ export async function runPlanMode(): Promise<void> {
   if (isCancel(goal) || !goal.trim()) return;
   const plan = await generatePlan(goal);
   printPlan(plan);
+  await say(
+    [
+      plan.researchSummary,
+      ...plan.steps.map(
+        (s, i) => `Step ${i + 1}: ${s.title}. ${s.description}`,
+      ),
+    ]
+      .filter(Boolean)
+      .join("\n"),
+  );
   const selected = await selectSteps(plan);
   if (selected.length === 0) return;
   const proceed = await confirm({
     message: `Execute ${selected.length} step(s)`,
     initialValue: true,
   });
+  if (isCancel(proceed) || !proceed) return;
   const config = defaultAgentConfig();
   const tracker = new ActionTracker();
   const executor = new ToolExecutor(tracker, config);
@@ -44,7 +56,10 @@ export async function runPlanMode(): Promise<void> {
       tools,
     });
     const r = await agent.generate({ prompt: stepPrompt(plan.goal, step) });
-    if (r.text) return console.log(renderTerminalMarkdown(r.text));
+    if (r.text) {
+      console.log(renderTerminalMarkdown(r.text));
+      await say(r.text);
+    }
   }
   const ok = await runApprovalFlow(tracker);
   if (!ok) return executor.clearStaging();
@@ -56,4 +71,9 @@ export async function runPlanMode(): Promise<void> {
     console.log(chalk.green("\n✓ Applied.\n"));
   }
   executor.clearStaging();
+  await say(
+    errors.length
+      ? `Some operations failed. ${errors.join(". ")}`
+      : "Approved changes applied.",
+  );
 }
