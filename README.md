@@ -1,7 +1,11 @@
-# OpenClawClone
+# AI Coding Assistant CLI
+
+An AI coding assistant with text and voice controls, Agent, Ask, and Plan modes,
+web research, and approval-based file and shell operations.
 
 Run `bun install`, then `bun run index.ts wakeup`. Set `OPENROUTER_API_KEY` and
 `OPENROUTER_DEFAULT_MODEL` in `.env` for AI requests.
+The executable command is `ai-coding-assistant-cli wakeup` when installed or linked.
 
 Choose **Voice** to use the same Agent, Ask, and Plan workflows through speech.
 Voice uses Windows PowerShell and the built-in `System.Speech` engine; no speech
