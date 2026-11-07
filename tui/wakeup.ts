@@ -2,6 +2,7 @@ import chalk from "chalk";
 import figlet from "figlet";
 import { select, isCancel } from "@clack/prompts";
 import { runCliMode } from "../modes/cli";
+import { runVoiceMode } from "../modes/voice/orchestrator";
 
 const BANNER_FONT = "ANSI Shadow";
 const SHADOW = chalk.hex("#5b4d9e");
@@ -34,7 +35,7 @@ export async function runWakeup() {
       message: "Which mode do you want select?",
       options: [
         { value: "cli", label: "CLI" },
-        { value: "telegram", label: "Telegram" },
+        { value: "voice", label: "Voice" },
         { value: "exit", label: "Exit" },
       ],
     });
@@ -45,9 +46,8 @@ export async function runWakeup() {
     if (mode === "cli") {
       const result = await runCliMode();
       if (result === "cancel") return;
-    } else if (mode === "telegram") {
-      console.log(chalk.dim("You selected telegram mode."));
-      return;
+    } else if (mode === "voice") {
+      await runVoiceMode();
     }
   }
 }

@@ -1,6 +1,6 @@
 import chalk from "chalk";
-import { multiselect, isCancel } from "@clack/prompts";
 import type { Plan, PlanStep } from "./types.ts";
+import { multiselect, isCancel } from "../../tui/interaction";
 import { renderTerminalMarkdown } from "../../tui/terminal-md.ts";
 
 const COMPLEXITY_COLOR: Record<NonNullable<PlanStep["complexity"]>, string> = {

@@ -1,7 +1,7 @@
 import chalk from "chalk";
 import { z } from "zod";
 import { ToolLoopAgent, stepCountIs, tool } from "ai";
-import { confirm, isCancel, text } from "@clack/prompts";
+import { confirm, isCancel, text } from "../../tui/interaction";
 import { ActionTracker } from "../agent/action-tracker.ts";
 import { ToolExecutor } from "../agent/tool-executor.ts";
 import { defaultAgentConfig } from "../agent/types.ts";
@@ -9,6 +9,7 @@ import { runApprovalFlow } from "../agent/approval.ts";
 import { createWebTools } from "../plan/web-tools.ts";
 import { getAgentModel } from "../../ai/ai.config.ts";
 import { renderTerminalMarkdown } from "../../tui/terminal-md.ts";
+import { say } from "../../tui/interaction";
 
 function createAskTool(executor: ToolExecutor) {
   return {
@@ -94,6 +95,7 @@ export async function runAskMode() {
   const result = await agent.generate({ prompt: question.trim() });
   const answer = result.text?.trim() || "(no answer)";
   console.log("\n" + renderTerminalMarkdown(answer) + "\n");
+  await say(answer);
   const wantsSave = await confirm({
     message: "Save this answer to a .md file in the current directory?",
     initialValue: false,
@@ -114,6 +116,12 @@ export async function runAskMode() {
   executor.createFile(filename, asMd(question, answer));
   const ok = await runApprovalFlow(tracker);
   if (!ok) return executor.clearStaging();
-  executor.applyApprovedFromTracker();
+  const { errors } = executor.applyApprovedFromTracker();
   executor.clearStaging();
+  if (errors.length) console.log(chalk.red(errors.join("\n")));
+  await say(
+    errors.length
+      ? `Could not save the answer. ${errors.join(". ")}`
+      : "Answer saved.",
+  );
 }
